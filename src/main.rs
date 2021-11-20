@@ -22,6 +22,7 @@ async fn main() -> Result<(), http_types::Error> {
     println!("Starting program...");
     println!();
     let channels: Vec<String> = vec!["".to_owned()];
+    let highlight_list: Vec<String> = vec![];
     let ignore_list: Vec<String> = vec![
         "streamelements".to_owned(),
     ];
@@ -65,11 +66,30 @@ async fn main() -> Result<(), http_types::Error> {
                 .filter(|chatter| !old_previous_users.contains(chatter))
                 .collect();
 
+            if !highlight_list.is_empty() {
+                // highlight any found highlighters
+                let to_highlight: Vec<String> = filtered
+                    .clone()
+                    .into_iter()
+                    .filter(|chatter| highlight_list.contains(chatter))
+                    .collect();
+
+                if !to_highlight.is_empty() {
+                    println!(
+                        "********** {:?} {}\n {:?}",
+                        Local::now().format("%F %r").to_string(),
+                        channel,
+                        to_highlight
+                    );
+                    println!();
+                }
+            }
+
             previous_users.insert(channel.to_string(), all);
 
             // we have new viewers for this channel! print them to console!
             if !filtered.is_empty() {
-                println!("{:?} {}\n {:?}", Local::now(), channel, filtered);
+                println!("{:?} {}\n {:?}", Local::now().format("%F %r").to_string(), channel, filtered);
                 println!();
             }
             thread::sleep(inner_delay);

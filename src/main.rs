@@ -27,7 +27,8 @@ async fn main() -> Result<(), http_types::Error> {
     ];
 
     let mut previous_users: HashMap<String, Vec<String>> = HashMap::new();
-    let delay = time::Duration::from_secs(60);
+    let main_delay = time::Duration::from_secs(60);
+    let inner_delay = time::Duration::from_secs(2);
 
     for channel in &channels {
         previous_users.insert(channel.clone(), vec![]);
@@ -71,7 +72,8 @@ async fn main() -> Result<(), http_types::Error> {
                 println!("{:?} {}\n {:?}", Local::now(), channel, filtered);
                 println!();
             }
+            thread::sleep(inner_delay);
         }
-        thread::sleep(delay);
+        thread::sleep(main_delay);
     }
 }

@@ -21,11 +21,12 @@ struct Chatters {
 async fn main() -> Result<(), http_types::Error> {
     println!("Starting program...");
     println!();
+
+    let should_highlight = true;
+    let should_list_new = false;
     let channels: Vec<String> = vec!["".to_owned()];
-    let highlight_list: Vec<String> = vec![];
-    let ignore_list: Vec<String> = vec![
-        "streamelements".to_owned(),
-    ];
+    let highlight_list: Vec<String> = vec!["".to_owned()];
+    let ignore_list: Vec<String> = vec!["streamelements".to_owned()];
 
     let mut previous_users: HashMap<String, Vec<String>> = HashMap::new();
     let main_delay = time::Duration::from_secs(60);
@@ -60,14 +61,19 @@ async fn main() -> Result<(), http_types::Error> {
                 .collect();
 
             // filter out old_previous_users
-            let filtered: Vec<String> = filtered
+            let mut filtered: Vec<String> = filtered
                 .clone()
                 .into_iter()
                 .filter(|chatter| !old_previous_users.contains(chatter))
                 .collect();
 
-            if !highlight_list.is_empty() {
-                // highlight any found highlighters
+            filtered.sort();
+            previous_users.insert(channel.to_string(), all);
+
+            let now = Local::now().format("%F %r").to_string();
+
+            // highlight any found highlighters
+            if should_highlight && !highlight_list.is_empty() {
                 let to_highlight: Vec<String> = filtered
                     .clone()
                     .into_iter()
@@ -75,21 +81,14 @@ async fn main() -> Result<(), http_types::Error> {
                     .collect();
 
                 if !to_highlight.is_empty() {
-                    println!(
-                        "********** {:?} {}\n {:?}",
-                        Local::now().format("%F %r").to_string(),
-                        channel,
-                        to_highlight
-                    );
+                    println!("********** {:?} {}\n {:?}", now, channel, to_highlight);
                     println!();
                 }
             }
 
-            previous_users.insert(channel.to_string(), all);
-
             // we have new viewers for this channel! print them to console!
-            if !filtered.is_empty() {
-                println!("{:?} {}\n {:?}", Local::now().format("%F %r").to_string(), channel, filtered);
+            if should_list_new && !filtered.is_empty() {
+                println!("{:?} {}\n {:?}", now, channel, filtered);
                 println!();
             }
             thread::sleep(inner_delay);

@@ -23,7 +23,7 @@ async fn main() -> Result<(), http_types::Error> {
     println!();
 
     let should_highlight = true;
-    let should_list_new = false;
+    let should_list_new = true;
     let channels: Vec<String> = vec!["".to_owned()];
     let highlight_list: Vec<String> = vec!["".to_owned()];
     let ignore_list: Vec<String> = vec!["streamelements".to_owned()];

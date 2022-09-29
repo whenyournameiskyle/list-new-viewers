@@ -40,7 +40,13 @@ async fn main() -> Result<(), http_types::Error> {
         for channel in &channels {
             let uri = format!("https://tmi.twitch.tv/group/user/{}/chatters", channel);
             let string: String = surf::get(uri).recv_string().await?;
-            let resp: Response = from_str(&string)?;
+            let resp: Response = match from_str(&string) {
+                Ok(resp) => resp,
+                Err(err) => {
+                    println!("Could not parse channel {}: {}", channel, err);
+                    continue;
+                }
+            };
             let chatters = resp.chatters;
             let all: Vec<String> = [
                 chatters.broadcaster,

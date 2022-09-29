@@ -2,7 +2,7 @@ use chrono::Local;
 use serde::Deserialize;
 use serde_json::from_str;
 use std::collections::HashMap;
-use std::{thread, time};
+use std::{thread, time::{Duration}};
 
 #[derive(Debug, Deserialize)]
 struct Response {
@@ -21,16 +21,16 @@ struct Chatters {
 async fn main() -> Result<(), http_types::Error> {
     println!("Starting program...");
     println!();
-
     let should_highlight = true;
     let should_list_new = true;
-    let channels: Vec<String> = vec!["".to_owned()];
-    let highlight_list: Vec<String> = vec!["".to_owned()];
-    let ignore_list: Vec<String> = vec!["streamelements".to_owned()];
+    let ignore_list = Vec<String> = vec![""].iter().map(|strng| strng.to_string()).collect();
+    let channels: Vec<String> = vec![""].iter().map(|strng| strng.to_string()).collect();
+    let highlight_list: Vec<String> = vec![""].iter().map(|strng| strng.to_string()).collect();
+
 
     let mut previous_users: HashMap<String, Vec<String>> = HashMap::new();
-    let main_delay = time::Duration::from_secs(60);
-    let inner_delay = time::Duration::from_secs(2);
+    let main_delay = Duration::from_secs(60);
+    let inner_delay = Duration::from_secs(2);
 
     for channel in &channels {
         previous_users.insert(channel.clone(), vec![]);
